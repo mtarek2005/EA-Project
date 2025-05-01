@@ -18,7 +18,7 @@
         <child>
           <object class="GtkEntry" id="nodes_entry">
             <property name="hexpand">True</property>
-            <property name="text">[('A', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'D')]</property>
+            <property name="text">['A', 'B','C', 'D']</property>
           </object>
         </child>
       </object>
@@ -54,6 +54,7 @@
         <child>
           <object class="GtkEntry" id="route_entry">
             <property name="hexpand">True</property>
+            <property name="text">[('A', 'B'), ('B', 'C'), ('C', 'A')]</property>
           </object>
         </child>
       </object>

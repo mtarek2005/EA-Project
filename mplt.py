@@ -50,8 +50,31 @@ class Gtk4MpltNx(Gtk.ScrolledWindow):
         toolbar = NavigationToolbar(canvas)
         vbox.append(toolbar)
 
-#     win.show()
-#
-# app = Gtk.Application(application_id='org.example.NetworkXGTK4')
-# app.connect('activate', on_activate)
-# app.run(None)
+class Gtk4Mplt(Gtk.ScrolledWindow):
+    __gtype_name__ = 'Gtk4Mplt'
+    def __init__(self, graph):
+        # # Create the main application window
+        # win = Gtk.ApplicationWindow(application=app)
+        # win.set_default_size(600, 400)
+        # win.set_title("NetworkX DiGraph in GTK4")
+        # Create a scrolled window and add the Matplotlib canvas
+        super().__init__(margin_top=10, margin_bottom=10, margin_start=10, margin_end=10)
+
+        # Create a Matplotlib figure and axes
+        fig = Figure(figsize=(5, 4), dpi=100)
+        ax = fig.add_subplot()
+
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.set_child(vbox)
+
+        canvas = FigureCanvas(fig)  # A Gtk.DrawingArea
+        #canvas.set_size_request(800, 600)
+        canvas.set_hexpand(True)
+        canvas.set_vexpand(True)
+        vbox.append(canvas)
+
+        # Create toolbar
+        toolbar = NavigationToolbar(canvas)
+        vbox.append(toolbar)
+

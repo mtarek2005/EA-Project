@@ -19,9 +19,12 @@ class MyWindow(Gtk.ApplicationWindow):
 
     def on_button_clicked(self, button, data:dict):
         print("Button clicked!")
+        self.set_default_size(900,600)
         G = nx.DiGraph()
+        G.add_nodes_from(eval(data['nodes'][0]))
         G.add_edges_from(eval(data['edges'][0]))
-        mpltnx = Gtk4MpltNx(G,False,False,[('A', 'B'), ('B', 'C'), ('C', 'A')])
+        route=eval(data['route'][0])
+        mpltnx = Gtk4MpltNx(G,False,False,route)
         self.set_child(mpltnx)
 
 
