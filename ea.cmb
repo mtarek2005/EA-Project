@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
+<!-- Created with Cambalache 0.96.0 -->
+<cambalache-project version="0.96.0" target_tk="gtk-4.0">
+  <ui filename="test.ui" sha256="26bfafe5ee37db3ae235749a00be9062fdc2fce148a5dc883233b8868c073241"/>
+  <ui template-class="SettingsWidget" filename="settings.ui" sha256="8aae6675485c46dbcd68f4ed191102456e83ff6700c08a593fad6d1dde3f86bf"/>
+</cambalache-project>
