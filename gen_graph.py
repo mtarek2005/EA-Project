@@ -3,11 +3,6 @@ import matplotlib.pyplot as plt
 import random
 import math
 
-# Parameters
-num_nodes = 25
-edge_probability = 0.05  # Probability of edge creation between nodes
-min_traffic = 1.0       # Minimum traffic factor
-max_traffic = 2.0       # Maximum traffic factor
 def make_graph(num_nodes:int = 25, edge_probability:float = 0.05, min_traffic:float = 1.0, max_traffic:float = 2.0, seed=None) -> nx.DiGraph:
     random.seed(seed)
     # Create a directed graph
@@ -48,7 +43,7 @@ def make_graph(num_nodes:int = 25, edge_probability:float = 0.05, min_traffic:fl
             weight = distance * traffic_factor
             G.add_edge(i, j, weight=weight, distance=distance, traffic_factor=traffic_factor)
     return G
-def rand_route(G:nx.DiGraph):
+def rand_route(G:nx.DiGraph) -> list,list:
     individual=[]
     cities_to_do=list(G.nodes)
     start=random.choice(cities_to_do)

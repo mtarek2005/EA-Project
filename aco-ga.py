@@ -2,6 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+import make_graph, rand_route from gen_graph
 
 class City:
     def __init__(self, x, y):
@@ -58,21 +59,19 @@ class GA:
         return elites + remaining
 
     def crossover(self, parent1, parent2):
-        child = []
-        gene_a = random.randint(0, len(parent1)-1)
-        gene_b = random.randint(0, len(parent1)-1)
-        start, end = min(gene_a, gene_b), max(gene_a, gene_b)
-        child += parent1[start:end+1]
-        end_node=parent1[end]
-        start_p2=parent2.index(end_node)
-        child += [city for city in parent2 if city not in child]
+        #graph route random crossover by combining graphs
+        parent1_edges=[(parent1[i],parent1[i+1]) for i in range(len(parent1)-1)]
+        parent2_edges=[(parent2[i],parent2[i+1]) for i in range(len(parent2)-1)]
+        parent_graph=nx.DiGraph(parent1_edges+parent2_edges)
+        child=rand_route(parent_graph)
         return child
 
     def mutate(self, individual):
-        for i in range(len(individual)):
+        for i in range(len(individual)-1):
             if random.random() < self.mutation_rate:
-                j = random.randint(0, len(individual)-1)
-                individual[i], individual[j] = individual[j], individual[i]
+                j = random.choice(set(self.cities.neighbors(i))-{individual[i+1]})
+                path=nx.shortest_path(self.cities,j,individual[i+1],weight="weight")
+                individual=individual[:i+1]+path[:-1]+individual[i+1:]
         return individual
 
     def route_distance(self, route):
@@ -97,7 +96,7 @@ class GA:
 
 
 # Ant Colony Optimization Components
-class ACO:
+"""class ACO:
     def __init__(self, cities, n_ants=20, alpha=1, beta=2, evaporation=0.5):
         self.cities = cities
         self.n_ants = n_ants
@@ -242,12 +241,12 @@ class HybridGAACO:
         return best_overall, best_distance
 
 
-
+"""
 # Example usage
 if __name__ == "__main__":
     # Create 25 random cities
-    cities = [City(x=random.randint(0, 200), y=random.randint(0, 200)) for _ in range(25)]
-
+    cities = make_graph(num_nodes=25,seed=1)
+    """
     hybrid = HybridGAACO(cities)
     best_route, best_distance = hybrid.run()
     best_route2, best_distance2 = hybrid.run_ga_aco()
@@ -273,28 +272,25 @@ if __name__ == "__main__":
     plt.ylabel('Y Coordinate')
     plt.legend()
     plt.show()
-
+    """
     GA_TEST= GA(cities)
 
     BESTga=GA_TEST.create_solution()
 
     distance= GA_TEST.route_distance(BESTga)
 
-
-
-
-
-    x= [city.x for city in BESTga]
-    y= [city.y for city in BESTga]
-    plt.figure(figsize=(10, 6))
-    plt.plot(x + [x[0]], y + [y[0]], 'b--', alpha=0.5, label='Route')
-    plt.scatter(x, y, c='red', label='Cities')
+    positions = nx.get_node_attributes(G,"pos")
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    route_edges=[(BESTga[i],BESTga[i+1]) for i in range(len(BESTga)-1)]
+    nx.draw(G, positions, with_labels=True, node_size=500, node_color='lightblue', arrows=True, width=4)
+    nx.draw_networkx_edges(G, edgelist=route_edges, pos=positions, arrows=True, width=1, edge_color='red')
+    nx.draw_networkx_edge_labels(G, positions, edge_labels={k: f"{v:.2f}" for k, v in edge_labels.items()})
     plt.title(f'GA Solution (Distance: {distance:.2f})')
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
     plt.legend()
     plt.show()
-
+    """
     ACO_TEST= ACO(cities)
 
     BESTACO,ACO_distance=ACO_TEST.construct_solution()
@@ -313,4 +309,4 @@ if __name__ == "__main__":
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
     plt.legend()
-    plt.show()
+    plt.show()"""
