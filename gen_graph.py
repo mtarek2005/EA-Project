@@ -47,8 +47,8 @@ def make_graph(num_nodes:int = 25, edge_probability:float = 0.05, min_traffic:fl
         for comp_i in sccs:
             for comp_j in sccs:
                 if not nx.has_path(G,list(comp_i)[0],list(comp_j)[0]):
-                    i = random.choice(comp_i)
-                    j = random.choice(comp_j)
+                    i = random.choice(list(comp_i))
+                    j = random.choice(list(comp_j))
                     x1, y1 = positions[i]
                     x2, y2 = positions[j]
                     distance = math.hypot(x2 - x1, y2 - y1)
@@ -56,8 +56,8 @@ def make_graph(num_nodes:int = 25, edge_probability:float = 0.05, min_traffic:fl
                     weight = distance * traffic_factor
                     G.add_edge(i, j, weight=weight, distance=distance, traffic_factor=traffic_factor)
                 if not nx.has_path(G,list(comp_j)[0],list(comp_i)[0]):
-                    i = random.choice(comp_j)
-                    j = random.choice(comp_i)
+                    i = random.choice(list(comp_j))
+                    j = random.choice(list(comp_i))
                     x1, y1 = positions[i]
                     x2, y2 = positions[j]
                     distance = math.hypot(x2 - x1, y2 - y1)
@@ -69,6 +69,7 @@ def rand_route(G:nx.DiGraph,perc_random:float=0.8):
     print("rand_route")
     individual=[]
     cities_to_do=list(G.nodes)
+    random.shuffle(cities_to_do)
     start=random.choice(cities_to_do)
     next_city=start
     individual.append(next_city)
