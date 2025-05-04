@@ -27,7 +27,7 @@ def make_graph(num_nodes:int = 25, edge_probability:float = 0.05, min_traffic:fl
                 G.add_edge(i, j, weight=weight, distance=distance, traffic_factor=traffic_factor)
     for i in G.nodes:
         if(G.in_degree(i)==0 or (G.in_degree(i)==1 and list(G.in_edges(i))[0][0]==i)):
-            j=random.choice(list(G.nodes))
+            j=random.choice([e for e in list(G.nodes) if e != i])
             x1, y1 = positions[i]
             x2, y2 = positions[j]
             distance = math.hypot(x2 - x1, y2 - y1)
@@ -35,28 +35,54 @@ def make_graph(num_nodes:int = 25, edge_probability:float = 0.05, min_traffic:fl
             weight = distance * traffic_factor
             G.add_edge(j, i, weight=weight, distance=distance, traffic_factor=traffic_factor)
         if(G.out_degree(i)==0 or (G.out_degree(i)==1 and list(G.out_edges(i))[0][1]==i)):
-            j=random.choice(list(G.nodes))
+            j=random.choice([e for e in list(G.nodes) if e != i])
             x1, y1 = positions[i]
             x2, y2 = positions[j]
             distance = math.hypot(x2 - x1, y2 - y1)
             traffic_factor = random.uniform(min_traffic, max_traffic)
             weight = distance * traffic_factor
             G.add_edge(i, j, weight=weight, distance=distance, traffic_factor=traffic_factor)
+    while not nx.is_strongly_connected(G):
+        sccs = list(nx.strongly_connected_components(G))
+        for comp_i in sccs:
+            for comp_j in sccs:
+                if not nx.has_path(G,list(comp_i)[0],list(comp_j)[0]):
+                    i = random.choice(comp_i)
+                    j = random.choice(comp_j)
+                    x1, y1 = positions[i]
+                    x2, y2 = positions[j]
+                    distance = math.hypot(x2 - x1, y2 - y1)
+                    traffic_factor = random.uniform(min_traffic, max_traffic)
+                    weight = distance * traffic_factor
+                    G.add_edge(i, j, weight=weight, distance=distance, traffic_factor=traffic_factor)
+                if not nx.has_path(G,list(comp_j)[0],list(comp_i)[0]):
+                    i = random.choice(comp_j)
+                    j = random.choice(comp_i)
+                    x1, y1 = positions[i]
+                    x2, y2 = positions[j]
+                    distance = math.hypot(x2 - x1, y2 - y1)
+                    traffic_factor = random.uniform(min_traffic, max_traffic)
+                    weight = distance * traffic_factor
+                    G.add_edge(i, j, weight=weight, distance=distance, traffic_factor=traffic_factor)
     return G
-def rand_route(G:nx.DiGraph) -> list,list:
+def rand_route(G:nx.DiGraph,perc_random:float=0.8):
+    print("rand_route")
     individual=[]
     cities_to_do=list(G.nodes)
     start=random.choice(cities_to_do)
     next_city=start
     individual.append(next_city)
     cities_to_do.remove(next_city)
-    while len(cities_to_do)>0 or next_city!=start:
+    while len(cities_to_do)>len(G.nodes)*(1.0-perc_random):
         next_city=random.choice(list(G.neighbors(individual[-1])))
-        if len(cities_to_do)==0 and start in list(G.neighbors(individual[-1])):
-            next_city=start
+        #print(next_city,end=", ")
+        print(len(cities_to_do))
         individual.append(next_city)
         if next_city in cities_to_do:
             cities_to_do.remove(next_city)
+    for city in cities_to_do:
+        individual=individual[:-1]+nx.shortest_path(G,individual[-1],city,weight="weight")
+    individual=individual[:-1]+nx.shortest_path(G,individual[-1],start,weight="weight")
     #print(individual)
     route_edges=[(individual[i],individual[(i+1)%len(individual)]) for i in range(len(individual)-1)]
     return individual,route_edges
