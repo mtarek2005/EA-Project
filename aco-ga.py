@@ -75,7 +75,7 @@ class GA:
                 print(len(list(G.neighbors(individual[-1]))))
                 next_city=random.choice(list(set(G.neighbors(individual[-1]))-({individual[-2]} if len(individual)>=2
                                                                             and not any((parent1[i]==individual[-2] and parent1[i+1]==individual[-1] and parent1[i+2]==individual[-2]) for i in range(len(parent1)-2))
-                                                                            and not any((parent1[i]==individual[-2] and parent1[i+1]==individual[-1] and parent1[i+2]==individual[-2]) for i in range(len(parent1)-2))
+                                                                            and not any((parent2[i]==individual[-2] and parent2[i+1]==individual[-1] and parent2[i+2]==individual[-2]) for i in range(len(parent2)-2))
                                                                             and len(list(G.neighbors(individual[-1])))>1
                                                                             else set())))
                 #print(next_city,end=", ")
