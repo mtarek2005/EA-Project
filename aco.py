@@ -20,14 +20,15 @@ class ACO:
         best_route = routes[0] if routes else None
         if routes:
             for prev_route in routes:
-                self.update_pheromones(ga_route, self.route_distance(ga_route),pherm_rate=5)
+                self.update_pheromones(prev_route, self.route_distance(prev_route),pherm_rate=10)
         best_distance = float('inf') if not routes else self.route_distance(routes[0])
-        for _ in range(iter):
+        for i in range(iter):
+            print(f'iter: {i}')
             for _ in range(self.n_ants):
                 route = self.ant_tour()
                 if not route:
                     continue  # Skip if no valid route found
-                print(route)
+                # print(route)
                 distance = self.route_distance(route)
                 if distance < best_distance:
                     best_route = route

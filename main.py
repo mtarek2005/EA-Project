@@ -8,7 +8,7 @@ from settings import SettingsWidget
 from gen_graph import make_graph
 from ga import GA
 from aco import ACO
-from 'hybride GAACO' import HybridGAACO
+from HybridGAACO import HybridGAACO
 
 
 class MyWindow(Gtk.ApplicationWindow):
@@ -35,10 +35,10 @@ class MyWindow(Gtk.ApplicationWindow):
             distance=ga.route_distance(route)
         elif data["type"][0]=="ACO":
             aco = ACO(G, n_ants=25, alpha=1, beta=2, evaporation=0.5)
-            route, distance = aco.run_aco(iterations=500)
+            route, distance = aco.run_aco(iterations=5000)
         elif data["type"][0]=="HYB":
             HybridGAACO_TEST= HybridGAACO(G)
-            route,distance=HybridGAACO_TEST.run(ga_generations=20, aco_iterations=10, cycles=5)
+            route,distance=HybridGAACO_TEST.run(ga_generations=50, aco_iterations=5000, cycles=5)
         route_edges=[(route[i],route[i+1]) for i in range(len(route)-1)]
         mpltnx = Gtk4MpltNx(G,True,False,route_edges,f'Solution (Distance: {distance:.2f})')
         self.set_child(mpltnx)

@@ -116,54 +116,54 @@ class HybridGAACO:
 
 
 
+if __name__ == "__main__":
+    cities = make_graph(num_nodes=25,seed=656565)
+    HybridGAACO_TEST= HybridGAACO(cities)
 
-cities = make_graph(num_nodes=25,seed=656565)
-HybridGAACO_TEST= HybridGAACO(cities)
+    BESTga,distance=HybridGAACO_TEST.run(ga_generations=20, aco_iterations=10, cycles=5)
 
-BESTga,distance=HybridGAACO_TEST.run(ga_generations=20, aco_iterations=10, cycles=5)
+    positions = nx.get_node_attributes(cities,"pos")
+    edge_labels = nx.get_edge_attributes(cities, 'weight')
+    # Ensure BESTga is a flat list of nodes
+    if not isinstance(BESTga, list) or not all(isinstance(node, int) for node in BESTga):
+        raise ValueError("BESTga must be a flat list of node identifiers.")
 
-positions = nx.get_node_attributes(cities,"pos")
-edge_labels = nx.get_edge_attributes(cities, 'weight')
-# Ensure BESTga is a flat list of nodes
-if not isinstance(BESTga, list) or not all(isinstance(node, int) for node in BESTga):
-    raise ValueError("BESTga must be a flat list of node identifiers.")
+    # Construct edges for the best route
+    route_edges = [(BESTga[i], BESTga[i+1]) for i in range(len(BESTga)-1)]
 
-# Construct edges for the best route
-route_edges = [(BESTga[i], BESTga[i+1]) for i in range(len(BESTga)-1)]
+    # Draw the graph
+    nx.draw_networkx(
+        cities,
+        positions,
+        with_labels=True,
+        node_size=500,
+        node_color='lightblue',
+        arrows=True,
+        width=4
+    )
 
-# Draw the graph
-nx.draw_networkx(
-    cities, 
-    positions, 
-    with_labels=True, 
-    node_size=500, 
-    node_color='lightblue', 
-    arrows=True, 
-    width=4
-)
+    # Highlight the best route
+    nx.draw_networkx_edges(
+        cities,
+        edgelist=route_edges,
+        pos=positions,
+        arrows=True,
+        width=1,
+        edge_color='red'
+    )
 
-# Highlight the best route
-nx.draw_networkx_edges(
-    cities, 
-    edgelist=route_edges, 
-    pos=positions, 
-    arrows=True, 
-    width=1, 
-    edge_color='red'
-)
+    # Add edge labels
+    edge_labels = nx.get_edge_attributes(cities, 'weight')
+    nx.draw_networkx_edge_labels(
+        cities,
+        positions,
+        edge_labels={k: f"{v:.2f}" for k, v in edge_labels.items()}
+    )
 
-# Add edge labels
-edge_labels = nx.get_edge_attributes(cities, 'weight')
-nx.draw_networkx_edge_labels(
-    cities, 
-    positions, 
-    edge_labels={k: f"{v:.2f}" for k, v in edge_labels.items()}
-)
-
-# Print and display the solution
-print(f'GA_ACO Solution (Distance: {distance:.2f})')
-plt.title(f'GA_ACO Solution (Distance: {distance:.2f})')
-plt.xlabel('X Coordinate')
-plt.ylabel('Y Coordinate')
-plt.legend()
-plt.show()
+    # Print and display the solution
+    print(f'GA_ACO Solution (Distance: {distance:.2f})')
+    plt.title(f'GA_ACO Solution (Distance: {distance:.2f})')
+    plt.xlabel('X Coordinate')
+    plt.ylabel('Y Coordinate')
+    plt.legend()
+    plt.show()
