@@ -7,61 +7,25 @@ from gen_graph import make_graph, rand_route
 from ga import GA
 from aco import ACO
 
-import abc 
-
-class HybridGAACO(abc.ABC):
+class HybridGAACO:
     def __init__(self, cities:nx.DiGraph):
         self.cities = cities
         self.ga = GA(cities)
         self.aco = ACO(cities)
-        self.pop_size=60
-        self.population = [self.ga.create_individual() for _ in range(self.pop_size)]
-    @override
+
     def create_solution(self, gens:int=1):
-        bests=[]
-        if len(self.ga.population)==0:
-            self.ga.population=[self.ga.create_individual() for _ in range(self.ga.pop_size)]
-        for gen in range(gens):
-            ranked = self.ga.rank_routes(self.ga.population)
-            selection = self.ga.selection(ranked)
-            next_gen = []
-            while len(next_gen) < self.ga.pop_size:
-                parent1, parent2 = random.choices(selection, k=2)
-                child = self.ga.crossover_experimental(self.ga.population[parent1], self.ga.population[parent2])
-                next_gen.append(self.ga.mutate(child))
-            self.ga.population = sorted(self.ga.population, key=lambda x: self.ga.route_distance(x))[:self.ga.pop_size//2] + sorted(next_gen, key=lambda x: self.ga.route_distance(x))[:self.ga.pop_size//2]
-            bests.append(min([self.ga.route_distance(x) for x in self.ga.population]))
-        print(f"{gens} best:")
-        print(bests)
-        ga_best = sorted(self.ga.population, key=lambda x: self.ga.route_distance(x))
-        ga_best = ga_best[:10]
-        return ga_best
-    @override
+        return self.ga.create_solution(gens)
+
     def construct_solution(self,iter:int=1,ga_best=None):
-        best_route = ga_best
-        for ga_route in ga_best:
-            self.aco.update_pheromones(ga_route, self.aco.route_distance(ga_route),pherm_rate=5)
-            
-        best_distance = float('inf')
-        for _ in range(iter):    
-            for _ in range(self.aco.n_ants):
-                routes= self.aco.ant_tour()
-                for route in routes:
-                    if not route:
-                        continue  # Skip if no valid route found
-                    distance = self.aco.route_distance(route)
-                    if distance < best_distance:
-                        best_route = route
-                        best_distance = distance
-                    self.aco.update_pheromones(route, distance)
-        return best_route, best_distance
+        return self.aco.construct_solution(iter,ga_best)
+
     def run(self, ga_generations=20, aco_iterations=10, cycles=5):
         BESTga=[]
         for i in range(cycles):
             print(f"Cycle {i+1}/{cycles}")
             BESTga.append(self.create_solution(ga_generations))
     # Flatten BESTga into a single list of routes
-        flat_BESTga = [route for sublist in BESTga for route in sublist]
+        flat_BESTga = sorted([route for sublist in BESTga for route in sublist], key=lambda x: self.ga.route_distance(x))
         ACO_best, aco_dist = self.construct_solution(aco_iterations, flat_BESTga)
         print("Best route from GA_ACO:", ACO_best)
         print("Best distance from GA_ACO:", aco_dist)

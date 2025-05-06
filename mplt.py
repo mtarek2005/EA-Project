@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 
 class Gtk4MpltNx(Gtk.ScrolledWindow):
     __gtype_name__ = 'Gtk4MpltNx'
-    def __init__(self, graph: nx.DiGraph, pos_available:bool=True, weight_available:bool=True, route:list=None):
+    def __init__(self, graph: nx.DiGraph, pos_available:bool=True, write_weights:bool=True, route:list=None, title:str=""):
         # # Create the main application window
         # win = Gtk.ApplicationWindow(application=app)
         # win.set_default_size(600, 400)
@@ -21,6 +21,7 @@ class Gtk4MpltNx(Gtk.ScrolledWindow):
         # Create a Matplotlib figure and axes
         fig = Figure(figsize=(5, 4), dpi=100)
         ax = fig.add_subplot()
+        ax.title.set_text(title)
 
         # Create a directed graph
         # G = nx.DiGraph()
@@ -32,7 +33,7 @@ class Gtk4MpltNx(Gtk.ScrolledWindow):
 
         # Draw the graph
         nx.draw_networkx(G, pos=pos, ax=ax, arrows=True, with_labels=True, width=4)
-        if weight_available:
+        if write_weights:
             nx.draw_networkx_edge_labels(G, pos=pos, ax=ax, edge_labels={k: f"{v:.2f}" for k, v in nx.get_edge_attributes(G, 'weight').items()})
         if route != None:
             nx.draw_networkx_edges(G, pos=pos, ax=ax, arrows=True, edgelist=route, edge_color="red", style="dashed", width=2)

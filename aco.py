@@ -14,16 +14,20 @@ class ACO:
         self.node_list = list(cities.nodes())
         self.node_to_idx = {node: idx for idx, node in enumerate(self.node_list)}
         self.n_cities = len(self.node_list)
-        self.pheromone = np.ones((self.n_cities, self.n_cities))
+        self.pheromone = nx.to_numpy_array(cities,weight=None)
 
-    def construct_solution(self,iter:int=1):
-        best_route = None
-        best_distance = float('inf')
+    def construct_solution(self, iter:int=1, routes=None):
+        best_route = routes[0] if routes else None
+        if routes:
+            for prev_route in routes:
+                self.update_pheromones(ga_route, self.route_distance(ga_route),pherm_rate=5)
+        best_distance = float('inf') if not routes else self.route_distance(routes[0])
         for _ in range(iter):
             for _ in range(self.n_ants):
                 route = self.ant_tour()
                 if not route:
                     continue  # Skip if no valid route found
+                print(route)
                 distance = self.route_distance(route)
                 if distance < best_distance:
                     best_route = route
@@ -45,11 +49,15 @@ class ACO:
                 possible_next = list(unvisited)
             probabilities = self.calculate_probabilities(current, possible_next)
             if not probabilities:
-                next_city = random.choice(list(unvisited))
+                next_city = random.choice(list(neighbors))
             else:
                 next_city = random.choices(possible_next, weights=probabilities, k=1)[0]
-            route.append(next_city)
-            unvisited.remove(next_city)
+            if next_city in neighbors:
+                route.append(next_city)
+            else:
+                route+=nx.shortest_path(self.cities,current,next_city,weight="weight")[1:]
+            if next_city in unvisited:
+                unvisited.remove(next_city)
             current = next_city
         return route
 
@@ -84,7 +92,7 @@ class ACO:
                 self.pheromone[u_idx][v_idx] += pherm_rate / distance
     def route_distance(self, route):
         distance = 0.0
-        for i in range(len(route)):
+        for i in range(len(route)-1):
             u = route[i]
             v = route[(i + 1) % len(route)]
             if self.cities.has_edge(u, v):
@@ -96,18 +104,23 @@ class ACO:
     def run_aco(self, iterations=10):
         best_route = None
         best_distance = float('inf')
-        for _ in range(iterations):
+        for i in range(iterations):
+            print(f'iter: {i}')
             route, distance = self.construct_solution()
+            print(f'distance: {distance}')
             if distance < best_distance:
                 best_route = route
                 best_distance = distance
+        if best_route == None:
+            raise Exception("route not found")
         return best_route, best_distance
     
 if __name__ == "__main__":
     # Example usage
-    cities = make_graph(25, 0.7,3,5 )
+    # cities = make_graph(25, 0.7,3,5 )
+    cities = make_graph(num_nodes=25,seed=656565)
     aco = ACO(cities, n_ants=25, alpha=1, beta=2, evaporation=0.5)
-    best_route, best_distance = aco.run_aco(iterations=100)
+    best_route, best_distance = aco.run_aco(iterations=500)
     print("Best route:", best_route)
     print("Best distance:", best_distance)
     # Draw the graph
@@ -119,6 +132,4 @@ if __name__ == "__main__":
     nx.draw_networkx_edges(cities, edgelist=route_edges, pos=positions, arrows=True, width=4, edge_color='red')
     plt.show()
 
-
-    
 

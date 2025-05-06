@@ -4,13 +4,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from gen_graph import make_graph, rand_route
 
-class City:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def distance(self, city):
-        return np.sqrt((self.x - city.x)**2 + (self.y - city.y)**2)
 
 # Genetic Algorithm Components
 class GA:
@@ -29,7 +22,7 @@ class GA:
 
     def rank_routes(self, population):
         fitness_results = {i: 1/((self.route_distance(p)**2)) for i, p in enumerate(population)}
-        return sorted(fitness_results.items(), key=lambda x: x[1])
+        return sorted(fitness_results.items(), key=lambda x: x[1], reverse=True)
 
     def selection(self, ranked_pop):
     # Select elites (top 50%)
@@ -47,13 +40,13 @@ class GA:
 
         return elites + remaining
 
-    # def crossover(self, parent1, parent2, perc_random=0.3):
-    #     #graph route random crossover by combining graphs
-    #     parent1_edges=[(parent1[i],parent1[i+1]) for i in range(len(parent1)-1)]
-    #     parent2_edges=[(parent2[i],parent2[i+1]) for i in range(len(parent2)-1)]
-    #     parent_graph=nx.DiGraph(parent1_edges+parent2_edges)
-    #     child,_=rand_route(parent_graph,perc_random)
-    #     return child
+    def crossover(self, parent1, parent2, perc_random=0.3):
+        #graph route random crossover by combining graphs
+        parent1_edges=[(parent1[i],parent1[i+1]) for i in range(len(parent1)-1)]
+        parent2_edges=[(parent2[i],parent2[i+1]) for i in range(len(parent2)-1)]
+        parent_graph=nx.DiGraph(parent1_edges+parent2_edges)
+        child,_=rand_route(parent_graph,perc_random)
+        return child
 
     def crossover_experimental(self, parent1, parent2, perc_random=0.8):
         #graph route random crossover by combining graphs
@@ -62,7 +55,7 @@ class GA:
         parent_graph=nx.DiGraph(parent1_edges+parent2_edges)
         G=parent_graph
         individual=[]
-        cities_to_do=list(set(parent1))
+        cities_to_do=list(self.cities.nodes)
         start=random.choice([parent1[0],parent2[0]])
         next_city=start
         individual.append(next_city)
@@ -87,19 +80,23 @@ class GA:
             print(len(cities_to_do))
             tries-=1
         for city in cities_to_do:
-            individual=individual[:-1]+(nx.shortest_path(G,individual[-1],city,weight="weight") if nx.has_path(G,individual[-1],city) else nx.shortest_path(self.cities,individual[-1],city,weight="weight"))
+            individual=individual[:-1]+(nx.shortest_path(G,individual[-1],city,weight="weight") if G.has_node(city) and G.has_node(individual[-1]) and nx.has_path(G,individual[-1],city) else nx.shortest_path(self.cities,individual[-1],city,weight="weight"))
         child=individual
         return child
 
     def mutate(self, individual):
         if len(individual)>3: #mutate?
-            for i in range(len(individual)-2): #for every node in route
+            for _ in range(len(individual)): #for every node in route
                 if random.random() < self.mutation_rate: #try to mutate
+                    i=random.choice(list(range(len(individual)-2)))
                     neighbors=[e for e in self.cities.neighbors(individual[i]) if e != individual[i+1]] #neighbors to try to switch to
                     print(neighbors)
+                    print(f'i={i}, i+2={i+2} in len={len(individual)} and range={list(range(len(individual)-2))[-1]}')
                     if len(neighbors)>1:
                         j = random.choice(neighbors) # choose random mutation
-                        path=nx.shortest_path(self.cities,j,individual[i+2],weight="weight") # pathe from mutation choice to the next node
+                        path=nx.shortest_path(self.cities,j,individual[i+2],weight="weight") # path from mutation choice to the next node
+                        if len(path)<2:
+                            print(f"path: {path} shorter than 2")
                         individual=individual[:i+1]+path[:-1]+individual[i+2:] # stitch mutation into individual
         return individual
 
@@ -129,82 +126,35 @@ class GA:
         print(f"{gens} best:")
         print(bests)
         ga_best = sorted(self.population, key=lambda x: self.route_distance(x))
-        ga_best = ga_best[0]
+        ga_best = ga_best[:10]
         return ga_best
 
 
-# Hybrid GA-ACO System
 
 
 
-"""
 # Example usage
 if __name__ == "__main__":
     # Create 25 random cities
     cities = make_graph(num_nodes=25,seed=656565)
-    """
-    # hybrid = HybridGAACO(cities)
-    # best_route, best_distance = hybrid.run()
-    # best_route2, best_distance2 = hybrid.run_ga_aco()
-
-    # # Plot results
-    # x = [city.x for city in best_route]
-    # y = [city.y for city in best_route]
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(x + [x[0]], y + [y[0]], 'b--', alpha=0.5, label='Route')
-    # plt.scatter(x, y, c='red', label='Cities')
-    # plt.title(f'Hybrid GA-ACO Solution (Distance: {best_distance:.2f})')
-    # plt.xlabel('X Coordinate')
-    # plt.ylabel('Y Coordinate')
-    # plt.legend()
-    # plt.show()
-    # x = [city.x for city in best_route2]
-    # y = [city.y for city in best_route2]
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(x + [x[0]], y + [y[0]], 'b--', alpha=0.5, label='Route')
-    # plt.scatter(x, y, c='red', label='Cities')
-    # plt.title(f'Hybrid ACO-GA Solution (Distance: {best_distance2:.2f})')
-    # plt.xlabel('X Coordinate')
-    # plt.ylabel('Y Coordinate')
-    # plt.legend()
-    # plt.show()
-
-cities = make_graph(num_nodes=25,seed=656565)
-GA_TEST= GA(cities)
-
-BESTga=GA_TEST.create_solution(40)
-
-distance= GA_TEST.route_distance(BESTga)
-
-positions = nx.get_node_attributes(cities,"pos")
-edge_labels = nx.get_edge_attributes(cities, 'weight')
-route_edges=[(BESTga[i],BESTga[i+1]) for i in range(len(BESTga)-1)]
-nx.draw_networkx(cities, positions, with_labels=True, node_size=500, node_color='lightblue', arrows=True, width=4)
-nx.draw_networkx_edges(cities, edgelist=route_edges, pos=positions, arrows=True, width=1, edge_color='red')
-nx.draw_networkx_edge_labels(cities, positions, edge_labels={k: f"{v:.2f}" for k, v in edge_labels.items()})
-print(f'GA Solution (Distance: {distance:.2f})')
-plt.title(f'GA Solution (Distance: {distance:.2f})')
-plt.xlabel('X Coordinate')
-plt.ylabel('Y Coordinate')
-plt.legend()
-plt.show()
     
-    # ACO_TEST= ACO(cities)
+    GA_TEST= GA(cities)
 
-    # BESTACO,ACO_distance=ACO_TEST.construct_solution()
+    BESTga=GA_TEST.create_solution(40)[0]
 
+    distance= GA_TEST.route_distance(BESTga)
 
-
-
-
-
-    # x= [city.x for city in BESTACO]
-    # y= [city.y for city in BESTACO]
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(x + [x[0]], y + [y[0]], 'b--', alpha=0.5, label='Route')
-    # plt.scatter(x, y, c='red', label='Cities')
-    # plt.title(f'ACO Solution (Distance: {ACO_distance:.2f})')
-    # plt.xlabel('X Coordinate')
-    # plt.ylabel('Y Coordinate')
-    # plt.legend()
-    # plt.show()"""
+    positions = nx.get_node_attributes(cities,"pos")
+    edge_labels = nx.get_edge_attributes(cities, 'weight')
+    route_edges=[(BESTga[i],BESTga[i+1]) for i in range(len(BESTga)-1)]
+    nx.draw_networkx(cities, positions, with_labels=True, node_size=500, node_color='lightblue', arrows=True, width=4)
+    nx.draw_networkx_edges(cities, edgelist=route_edges, pos=positions, arrows=True, width=1, edge_color='red')
+    # nx.draw_networkx_edge_labels(cities, positions, edge_labels={k: f"{v:.2f}" for k, v in edge_labels.items()})
+    print(f'GA Solution (Distance: {distance:.2f})')
+    plt.title(f'GA Solution (Distance: {distance:.2f})')
+    plt.xlabel('X Coordinate')
+    plt.ylabel('Y Coordinate')
+    plt.legend()
+    plt.show()
+    
+    

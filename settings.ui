@@ -16,27 +16,16 @@
           </object>
         </child>
         <child>
-          <object class="GtkEntry" id="nodes_entry">
+          <object class="GtkSpinButton" id="nodes_spinbutton">
+            <property name="adjustment">
+              <object class="GtkAdjustment">
+                <property name="page-increment">10.0</property>
+                <property name="step-increment">1.0</property>
+                <property name="upper">200.0</property>
+              </object>
+            </property>
             <property name="hexpand">True</property>
-            <property name="text">['A', 'B','C', 'D']</property>
-          </object>
-        </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkBox">
-        <property name="halign">baseline-fill</property>
-        <property name="hexpand">True</property>
-        <property name="spacing">5</property>
-        <child>
-          <object class="GtkLabel" id="label">
-            <property name="label">Edges:</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkEntry" id="edges_entry">
-            <property name="hexpand">True</property>
-            <property name="text">[('A', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'D')]</property>
+            <property name="numeric">True</property>
           </object>
         </child>
       </object>
@@ -48,15 +37,104 @@
         <property name="spacing">5</property>
         <child>
           <object class="GtkLabel">
-            <property name="label">Route:</property>
+            <property name="label">edge_probability:</property>
           </object>
         </child>
         <child>
-          <object class="GtkEntry" id="route_entry">
+          <object class="GtkSpinButton" id="edge_probability_spinbutton">
+            <property name="adjustment">
+              <object class="GtkAdjustment">
+                <property name="step-increment">0.05</property>
+                <property name="upper">1.0</property>
+              </object>
+            </property>
+            <property name="digits">2</property>
             <property name="hexpand">True</property>
-            <property name="text">[('A', 'B'), ('B', 'C'), ('C', 'A')]</property>
+            <property name="numeric">True</property>
           </object>
         </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="halign">baseline-fill</property>
+        <property name="hexpand">True</property>
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Min Traffic:</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="min_traffic_spinbutton">
+            <property name="adjustment">
+              <object class="GtkAdjustment">
+                <property name="step-increment">0.1</property>
+                <property name="upper">10.0</property>
+              </object>
+            </property>
+            <property name="digits">1</property>
+            <property name="hexpand">True</property>
+            <property name="numeric">True</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="halign">baseline-fill</property>
+        <property name="hexpand">True</property>
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Max Traffic:</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="max_traffic_spinbutton">
+            <property name="adjustment">
+              <object class="GtkAdjustment">
+                <property name="step-increment">0.1</property>
+                <property name="upper">10.0</property>
+              </object>
+            </property>
+            <property name="digits">1</property>
+            <property name="hexpand">True</property>
+            <property name="numeric">True</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="halign">baseline-fill</property>
+        <property name="hexpand">True</property>
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Seed:</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="seed_entry">
+            <property name="hexpand">True</property>
+            <property name="text"/>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkDropDown" id="type_dropdown">
+        <property name="model">
+          <object class="GtkStringList">
+            <items>
+              <item>ACO</item>
+              <item>GA</item>
+              <item>Hybrid GA+ACO</item>
+            </items>
+          </object>
+        </property>
+        <property name="selected">2</property>
       </object>
     </child>
     <child>

@@ -5,6 +5,11 @@ from gi.repository import Gtk
 import networkx as nx
 from mplt import Gtk4MpltNx
 from settings import SettingsWidget
+from gen_graph import make_graph
+from ga import GA
+from aco import ACO
+from 'hybride GAACO' import HybridGAACO
+
 
 class MyWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
@@ -20,11 +25,22 @@ class MyWindow(Gtk.ApplicationWindow):
     def on_button_clicked(self, button, data:dict):
         print("Button clicked!")
         self.set_default_size(900,600)
-        G = nx.DiGraph()
-        G.add_nodes_from(eval(data['nodes'][0]))
-        G.add_edges_from(eval(data['edges'][0]))
-        route=eval(data['route'][0])
-        mpltnx = Gtk4MpltNx(G,False,False,route)
+        G = make_graph(data["nodes"][0],data["edge_probability"][0],data["min_traffic"][0],data["max_traffic"][0],data["seed"][0] if not data["seed"][0]=="None" else None)
+        print(data["type"][0])
+        route=[]
+        distance=0
+        if data["type"][0]=="GA":
+            ga=GA(G)
+            route=ga.create_solution(50)[0]
+            distance=ga.route_distance(route)
+        elif data["type"][0]=="ACO":
+            aco = ACO(G, n_ants=25, alpha=1, beta=2, evaporation=0.5)
+            route, distance = aco.run_aco(iterations=500)
+        elif data["type"][0]=="HYB":
+            HybridGAACO_TEST= HybridGAACO(G)
+            route,distance=HybridGAACO_TEST.run(ga_generations=20, aco_iterations=10, cycles=5)
+        route_edges=[(route[i],route[i+1]) for i in range(len(route)-1)]
+        mpltnx = Gtk4MpltNx(G,True,False,route_edges,f'Solution (Distance: {distance:.2f})')
         self.set_child(mpltnx)
 
 

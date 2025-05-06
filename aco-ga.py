@@ -134,8 +134,9 @@ class GA:
 
 
 # Ant Colony Optimization Components
-"""class ACO:
-    def __init__(self, cities, n_ants=20, alpha=1, beta=2, evaporation=0.5):
+"""
+class ACO:
+    def __init__(self, cities: nx.DiGraph, n_ants=20, alpha=1, beta=2, evaporation=0.5):
         self.cities = cities
         self.n_ants = n_ants
         self.alpha = alpha
@@ -322,23 +323,19 @@ if __name__ == "__main__":
     route_edges=[(BESTga[i],BESTga[i+1]) for i in range(len(BESTga)-1)]
     nx.draw_networkx(cities, positions, with_labels=True, node_size=500, node_color='lightblue', arrows=True, width=4)
     nx.draw_networkx_edges(cities, edgelist=route_edges, pos=positions, arrows=True, width=1, edge_color='red')
-    nx.draw_networkx_edge_labels(cities, positions, edge_labels={k: f"{v:.2f}" for k, v in edge_labels.items()})
+    # nx.draw_networkx_edge_labels(cities, positions, edge_labels={k: f"{v:.2f}" for k, v in edge_labels.items()})
     print(f'GA Solution (Distance: {distance:.2f})')
     plt.title(f'GA Solution (Distance: {distance:.2f})')
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
     plt.legend()
     plt.show()
+
     """
     ACO_TEST= ACO(cities)
-
+    
     BESTACO,ACO_distance=ACO_TEST.construct_solution()
-
-
-
-
-
-
+    
     x= [city.x for city in BESTACO]
     y= [city.y for city in BESTACO]
     plt.figure(figsize=(10, 6))
