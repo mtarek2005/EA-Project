@@ -19,37 +19,51 @@ class Gtk4MpltNx(Gtk.ScrolledWindow):
         super().__init__(margin_top=10, margin_bottom=10, margin_start=10, margin_end=10)
 
         # Create a Matplotlib figure and axes
-        fig = Figure(figsize=(5, 4), dpi=100)
-        ax = fig.add_subplot()
-        ax.title.set_text(title)
-
+        self.fig = Figure(figsize=(5, 4), dpi=100)
+        self.ax = self.fig.add_subplot()
+        self.ax.title.set_text(title)
+        self.route_lines=[]
         # Create a directed graph
         # G = nx.DiGraph()
         # G.add_edges_from([('A', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'D')])
-        G=graph
+        self.G=graph
 
         # Compute positions for the nodes
-        pos = nx.get_node_attributes(G,"pos") if pos_available else nx.spring_layout(G)
+        self.pos = nx.get_node_attributes(self.G,"pos") if pos_available else nx.spring_layout(G)
 
         # Draw the graph
-        nx.draw_networkx(G, pos=pos, ax=ax, arrows=True, with_labels=True, width=4)
+        nx.draw_networkx(self.G, pos=self.pos, ax=self.ax, arrows=True, with_labels=True, width=4)
         if write_weights:
-            nx.draw_networkx_edge_labels(G, pos=pos, ax=ax, edge_labels={k: f"{v:.2f}" for k, v in nx.get_edge_attributes(G, 'weight').items()})
+            nx.draw_networkx_edge_labels(self.G, pos=self.pos, ax=self.ax, edge_labels={k: f"{v:.2f}" for k, v in nx.get_edge_attributes(G, 'weight').items()})
+        self.route=route
         if route != None:
-            nx.draw_networkx_edges(G, pos=pos, ax=ax, arrows=True, edgelist=route, edge_color="red", style="dashed", width=2)
+            self.route_lines=nx.draw_networkx_edges(self.G, pos=self.pos, ax=self.ax, arrows=True, edgelist=route, edge_color="red", style="dashed", width=2)
 
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.set_child(vbox)
+        self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.set_child(self.vbox)
 
-        canvas = FigureCanvas(fig)  # A Gtk.DrawingArea
+        self.canvas = FigureCanvas(self.fig)  # A Gtk.DrawingArea
         #canvas.set_size_request(800, 600)
-        canvas.set_hexpand(True)
-        canvas.set_vexpand(True)
-        vbox.append(canvas)
+        self.canvas.set_hexpand(True)
+        self.canvas.set_vexpand(True)
+        self.vbox.append(self.canvas)
 
         # Create toolbar
-        toolbar = NavigationToolbar(canvas)
-        vbox.append(toolbar)
+        self.toolbar = NavigationToolbar(self.canvas)
+        self.vbox.append(self.toolbar)
+
+    def update(self,route:list=None, title:str=""):
+        self.ax.title.set_text(title)
+        if self.route != route:
+            self.route=route
+            for line in self.route_lines:
+                line.remove()
+            self.route_lines.clear()
+            self.route_lines=nx.draw_networkx_edges(self.G, pos=self.pos, ax=self.ax, arrows=True, edgelist=route, edge_color="red", style="dashed", width=2)
+        self.canvas.draw()
+
+
+
 
 class Gtk4Mplt(Gtk.ScrolledWindow):
     __gtype_name__ = 'Gtk4Mplt'
@@ -62,20 +76,20 @@ class Gtk4Mplt(Gtk.ScrolledWindow):
         super().__init__(margin_top=10, margin_bottom=10, margin_start=10, margin_end=10)
 
         # Create a Matplotlib figure and axes
-        fig = Figure(figsize=(5, 4), dpi=100)
-        ax = fig.add_subplot()
+        self.fig = Figure(figsize=(5, 4), dpi=100)
+        self.ax = self.fig.add_subplot()
 
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.set_child(vbox)
 
-        canvas = FigureCanvas(fig)  # A Gtk.DrawingArea
+        self.canvas = FigureCanvas(self.fig)  # A Gtk.DrawingArea
         #canvas.set_size_request(800, 600)
-        canvas.set_hexpand(True)
-        canvas.set_vexpand(True)
-        vbox.append(canvas)
+        self.canvas.set_hexpand(True)
+        self.canvas.set_vexpand(True)
+        vbox.append(self.canvas)
 
         # Create toolbar
-        toolbar = NavigationToolbar(canvas)
-        vbox.append(toolbar)
+        self.toolbar = NavigationToolbar(canvas)
+        vbox.append(self.toolbar)
 

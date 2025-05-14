@@ -7,11 +7,12 @@ from gen_graph import make_graph, rand_route
 
 # Genetic Algorithm Components
 class GA:
-    def __init__(self, cities: nx.DiGraph, pop_size=50, mutation_rate=0.02):
+    def __init__(self, cities: nx.DiGraph, pop_size=50, mutation_rate=0.02, update_callback=lambda i,r,d,t:None, conc=False):
         self.cities = cities
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.population = [ ]
+        self.update_callback = update_callback if not conc else None
 
     def create_individual(self):
         print("indu")
@@ -67,9 +68,9 @@ class GA:
                 print("neighbors: ")
                 print(len(list(G.neighbors(individual[-1]))))
                 next_city=random.choice(list(set(G.neighbors(individual[-1]))-({individual[-2]} if len(individual)>=2
+                                                                            and len(list(G.neighbors(individual[-1])))>1
                                                                             and not any((parent1[i]==individual[-2] and parent1[i+1]==individual[-1] and parent1[i+2]==individual[-2]) for i in range(len(parent1)-2))
                                                                             and not any((parent2[i]==individual[-2] and parent2[i+1]==individual[-1] and parent2[i+2]==individual[-2]) for i in range(len(parent2)-2))
-                                                                            and len(list(G.neighbors(individual[-1])))>1
                                                                             else set())))
                 #print(next_city,end=", ")
                 individual.append(next_city)
@@ -111,6 +112,7 @@ class GA:
         return distance
     def create_solution(self, gens:int=1):
         bests=[]
+        avgs=[]
         if len(self.population)==0:
             self.population=[self.create_individual() for _ in range(self.pop_size)]
         for gen in range(gens):
@@ -122,12 +124,16 @@ class GA:
                 child = self.crossover_experimental(self.population[parent1], self.population[parent2])
                 next_gen.append(self.mutate(child))
             self.population = sorted(self.population, key=lambda x: self.route_distance(x))[:self.pop_size//2] + sorted(next_gen, key=lambda x: self.route_distance(x))[:self.pop_size//2]
-            bests.append(min([self.route_distance(x) for x in self.population]))
+            dists=[self.route_distance(x) for x in self.population]
+            bests.append(min(dists))
+            avgs.append(sum(dists)/len(dists))
+            if(self.update_callback):
+                self.update_callback(gen,self.population[0],bests[-2] if len(bests)>1 else bests[-1],gens)
         print(f"{gens} best:")
         print(bests)
         ga_best = sorted(self.population, key=lambda x: self.route_distance(x))
         ga_best = ga_best[:10]
-        return ga_best
+        return ga_best,(bests,avgs)
 
 
 
@@ -140,7 +146,7 @@ if __name__ == "__main__":
     
     GA_TEST= GA(cities)
 
-    BESTga=GA_TEST.create_solution(40)[0]
+    BESTga,_=GA_TEST.create_solution(40)[0]
 
     distance= GA_TEST.route_distance(BESTga)
 

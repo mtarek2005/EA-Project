@@ -37,7 +37,7 @@
         <property name="spacing">5</property>
         <child>
           <object class="GtkLabel">
-            <property name="label">edge_probability:</property>
+            <property name="label">Edge Probability:</property>
           </object>
         </child>
         <child>
@@ -112,11 +112,29 @@
         <property name="spacing">5</property>
         <child>
           <object class="GtkLabel">
-            <property name="label">Seed:</property>
+            <property name="label">Map Seed:</property>
           </object>
         </child>
         <child>
-          <object class="GtkEntry" id="seed_entry">
+          <object class="GtkEntry" id="map_seed_entry">
+            <property name="hexpand">True</property>
+            <property name="text"/>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="halign">baseline-fill</property>
+        <property name="hexpand">True</property>
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Training Seed:</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="train_seed_entry">
             <property name="hexpand">True</property>
             <property name="text"/>
           </object>
@@ -131,6 +149,7 @@
               <item>ACO</item>
               <item>GA</item>
               <item>Hybrid GA+ACO</item>
+              <item>Hybrid ACO+GA</item>
             </items>
           </object>
         </property>
@@ -141,6 +160,14 @@
       <object class="GtkButton" id="run_button">
         <property name="label">Run</property>
         <signal name="clicked" handler="on_run_button_clicked"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkProgressBar" id="progress">
+        <property name="margin-bottom">8</property>
+        <property name="margin-end">8</property>
+        <property name="margin-start">8</property>
+        <property name="margin-top">5</property>
       </object>
     </child>
   </template>
