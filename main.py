@@ -32,10 +32,11 @@ class MyWindow(Gtk.ApplicationWindow):
         if self.anim:
             self.show_mpltnx(G,True,False,None,f'Iteration:  (Distance: )')
             self.update_i=0;
-        threading.Thread(target=self.run_task,args=(data,G),daemon=True).start()
+        for i in range(5):
+            threading.Thread(target=self.run_task,args=(data,G,i),daemon=True).start()
 
 
-    def run_task(self,data:dict,G:nx.DiGraph):
+    def run_task(self,data:dict,G:nx.DiGraph,iteration:int):
         random.seed(data["training_seed"][0] if not data["training_seed"][0]=="None" else None)
         print(data["type"][0])
         route=[]
@@ -56,9 +57,9 @@ class MyWindow(Gtk.ApplicationWindow):
             HybridGAACO_TEST= HybridGAACO(G,pop_size=50,mutation_rate=0.02, n_ants=25, alpha=1, beta=2, evaporation=0.5,update_callback=self.update_cb)
             route,distance,history=HybridGAACO_TEST.run_aco_plus_ga(ga_generations=50, aco_iterations=500, cycles=5)
         route_edges=[(route[i],route[i+1]) for i in range(len(route)-1)]
-        GLib.idle_add(self.show_mpltnx,G,True,False,route_edges,f'Solution (Distance: {distance:.2f})', history)
+        GLib.idle_add(self.show_mpltnx,G,True,False,route_edges,f'Solution (Distance: {distance:.2f})', history, iteration)
 
-    def show_mpltnx(self,graph: nx.DiGraph, pos_available: bool=True, write_weights: bool=True, route: list=None, title: str="", history=tuple()):
+    def show_mpltnx(self,graph: nx.DiGraph, pos_available: bool=True, write_weights: bool=True, route: list=None, title: str="", history=tuple(), i:int):
         self.set_default_size(900,600)
         self.mpltnx = Gtk4MpltNx(graph,pos_available,write_weights,route,title)
         self.set_child(self.mpltnx)
