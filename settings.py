@@ -12,6 +12,7 @@ class SettingsWidget(Gtk.Box):
     edge_probability_spinbutton = Gtk.Template.Child()
     min_traffic_spinbutton = Gtk.Template.Child()
     max_traffic_spinbutton = Gtk.Template.Child()
+    n_cities_spinbutton = Gtk.Template.Child()
     map_seed_entry = Gtk.Template.Child()
     train_seed_entry = Gtk.Template.Child()
     type_dropdown = Gtk.Template.Child()
@@ -26,6 +27,7 @@ class SettingsWidget(Gtk.Box):
                        'edge_probability':[0.05,self.edge_probability_spinbutton,self.edge_probability_spinbutton.get_value,self.edge_probability_spinbutton.set_value],
                        'min_traffic':[1.0,self.min_traffic_spinbutton,self.min_traffic_spinbutton.get_value,self.min_traffic_spinbutton.set_value],
                        'max_traffic':[2.0,self.max_traffic_spinbutton,self.max_traffic_spinbutton.get_value,self.max_traffic_spinbutton.set_value],
+                       'n_cities':[5,self.n_cities_spinbutton,self.n_cities_spinbutton.get_value_as_int,self.n_cities_spinbutton.set_value],
                        'seed':["0",self.map_seed_entry,self.map_seed_entry.get_text,self.map_seed_entry.set_text],
                        'training_seed':["0",self.train_seed_entry,self.train_seed_entry.get_text,self.train_seed_entry.set_text],
                        'type':["HYBGA",self.type_dropdown,lambda: list(types)[self.type_dropdown.get_selected()],lambda x:self.type_dropdown.set_selected(types[x])],

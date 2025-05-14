@@ -2,5 +2,5 @@
 <!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
 <!-- Created with Cambalache 0.96.0 -->
 <cambalache-project version="0.96.0" target_tk="gtk-4.0">
-  <ui template-class="SettingsWidget" filename="settings.ui" sha256="b7488eaa67e49c5ea35f34021be3d7b8edfc6e331f32f63fd2a76f0236924525"/>
+  <ui template-class="SettingsWidget" filename="settings.ui" sha256="cbe0e964533f20f69f396933a84873dc2e8c74708ad62a2f9309dc1873b9e9a6"/>
 </cambalache-project>

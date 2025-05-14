@@ -1,5 +1,4 @@
 import random
-from typing import override
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
