@@ -11,7 +11,7 @@
         <property name="hexpand">True</property>
         <property name="spacing">5</property>
         <child>
-          <object class="GtkLabel" id="label_2">
+          <object class="GtkLabel">
             <property name="label">Nodes:</property>
           </object>
         </child>
@@ -126,7 +126,6 @@
                 <property name="upper">10.0</property>
               </object>
             </property>
-            <property name="digits">1</property>
             <property name="hexpand">True</property>
             <property name="numeric">True</property>
           </object>
@@ -170,6 +169,27 @@
       </object>
     </child>
     <child>
+      <object class="GtkBox">
+        <property name="halign">baseline-fill</property>
+        <property name="hexpand">True</property>
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Show route change in progress:</property>
+            <property name="tooltip-text">TODO: make perform faster than freeze</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSwitch">
+            <property name="can-target">False</property>
+            <property name="margin-bottom">5</property>
+            <property name="margin-top">5</property>
+            <property name="tooltip-text">TODO: make perform faster than freeze</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
       <object class="GtkDropDown" id="type_dropdown">
         <property name="model">
           <object class="GtkStringList">
@@ -182,6 +202,701 @@
           </object>
         </property>
         <property name="selected">2</property>
+        <signal name="notify::selected" handler="on_type_dropdown_selected"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkStack" id="options_stack">
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Iterations:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="aco_i_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="lower">1.0</property>
+                            <property name="page-increment">100.0</property>
+                            <property name="step-increment">1.0</property>
+                            <property name="upper">10000.0</property>
+                          </object>
+                        </property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Number of ants:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="aco_n_ants_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="lower">1.0</property>
+                            <property name="page-increment">10.0</property>
+                            <property name="step-increment">1.0</property>
+                            <property name="upper">200.0</property>
+                          </object>
+                        </property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Alpha:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="aco_alpha_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="step-increment">0.1</property>
+                            <property name="upper">10.0</property>
+                          </object>
+                        </property>
+                        <property name="digits">1</property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Beta:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="aco_beta_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="step-increment">0.1</property>
+                            <property name="upper">10.0</property>
+                          </object>
+                        </property>
+                        <property name="digits">1</property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Evaporation:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="aco_evaporation_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="step-increment">0.1</property>
+                            <property name="upper">10.0</property>
+                          </object>
+                        </property>
+                        <property name="digits">1</property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Iterations:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="ga_i_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="lower">1.0</property>
+                            <property name="page-increment">100.0</property>
+                            <property name="step-increment">1.0</property>
+                            <property name="upper">10000.0</property>
+                          </object>
+                        </property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Population Size:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="ga_n_pop_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="lower">1.0</property>
+                            <property name="page-increment">10.0</property>
+                            <property name="step-increment">1.0</property>
+                            <property name="upper">200.0</property>
+                          </object>
+                        </property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">baseline-fill</property>
+                    <property name="hexpand">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Mutation Rate:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="ga_mutation_rate_spinbutton">
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="step-increment">0.01</property>
+                            <property name="upper">1.0</property>
+                          </object>
+                        </property>
+                        <property name="digits">2</property>
+                        <property name="hexpand">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="hexpand">True</property>
+                    <property name="label">GA Settings:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Iterations:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="ga_i_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">100.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">10000.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Population Size:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="ga_n_pop_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">10.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">200.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Mutation Rate:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="ga_mutation_rate_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.01</property>
+                                <property name="upper">1.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">2</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">ACO Settings</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Iterations:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_i_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">100.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">10000.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Number of ants:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_n_ants_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">10.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">200.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Alpha:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_alpha_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.1</property>
+                                <property name="upper">10.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">1</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Beta:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_beta_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.1</property>
+                                <property name="upper">10.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">1</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Evaporation:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_evaporation_spinbutton_2">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.1</property>
+                                <property name="upper">10.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">1</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">ACO Settings</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Iterations:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_i_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">100.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">10000.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Number of ants:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_n_ants_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">10.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">200.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Alpha:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_alpha_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.1</property>
+                                <property name="upper">10.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">1</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Beta:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_beta_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.1</property>
+                                <property name="upper">10.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">1</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Evaporation:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="aco_evaporation_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.1</property>
+                                <property name="upper">10.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">1</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="hexpand">True</property>
+                    <property name="label">GA Settings:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Iterations:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="ga_i_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">100.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">10000.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Population Size:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="ga_n_pop_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">1.0</property>
+                                <property name="page-increment">10.0</property>
+                                <property name="step-increment">1.0</property>
+                                <property name="upper">200.0</property>
+                              </object>
+                            </property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">baseline-fill</property>
+                        <property name="hexpand">True</property>
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Mutation Rate:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="ga_mutation_rate_spinbutton_3">
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="step-increment">0.01</property>
+                                <property name="upper">1.0</property>
+                              </object>
+                            </property>
+                            <property name="digits">2</property>
+                            <property name="hexpand">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
       </object>
     </child>
     <child>

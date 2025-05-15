@@ -17,6 +17,7 @@ class Gtk4MpltNx(Gtk.ScrolledWindow):
         # win.set_title("NetworkX DiGraph in GTK4")
         # Create a scrolled window and add the Matplotlib canvas
         super().__init__(margin_top=10, margin_bottom=10, margin_start=10, margin_end=10)
+        self.set_min_content_height(600)
 
         # Create a Matplotlib figure and axes
         self.fig = Figure(figsize=(5, 4), dpi=100)
@@ -52,6 +53,20 @@ class Gtk4MpltNx(Gtk.ScrolledWindow):
         self.toolbar = NavigationToolbar(self.canvas)
         self.vbox.append(self.toolbar)
 
+        # Route
+        # route_str="Route:"
+        # for edge in self.route:
+        #     route_str+=f'{edge[0]}→{edge[1]}(weight={self.G.get_edge_data(edge[0],edge[1])["weight"]:.1f}), '
+        # route_str=route_str[:-2]
+        # self.route_scroll=Gtk.ScrolledWindow()
+        # self.route_scroll.max_content_height=50
+        # self.route_label = Gtk.Label()
+        # self.route_label.set_wrap(True)
+        # self.route_label.set_label(route_str)
+        # self.route_scroll.set_child(self.route_label)
+        # self.vbox.append(self.route_scroll)
+
+
     def update(self,route:list=None, title:str=""):
         self.ax.title.set_text(title)
         if self.route != route:
@@ -67,7 +82,7 @@ class Gtk4MpltNx(Gtk.ScrolledWindow):
 
 class Gtk4Mplt(Gtk.ScrolledWindow):
     __gtype_name__ = 'Gtk4Mplt'
-    def __init__(self, graph):
+    def __init__(self,figsize=(5, 4), dpi=100):
         # # Create the main application window
         # win = Gtk.ApplicationWindow(application=app)
         # win.set_default_size(600, 400)
@@ -76,7 +91,7 @@ class Gtk4Mplt(Gtk.ScrolledWindow):
         super().__init__(margin_top=10, margin_bottom=10, margin_start=10, margin_end=10)
 
         # Create a Matplotlib figure and axes
-        self.fig = Figure(figsize=(5, 4), dpi=100)
+        self.fig = Figure(figsize=figsize, dpi=dpi)
         self.ax = self.fig.add_subplot()
 
 
@@ -90,6 +105,6 @@ class Gtk4Mplt(Gtk.ScrolledWindow):
         vbox.append(self.canvas)
 
         # Create toolbar
-        self.toolbar = NavigationToolbar(canvas)
+        self.toolbar = NavigationToolbar(self.canvas)
         vbox.append(self.toolbar)
 
