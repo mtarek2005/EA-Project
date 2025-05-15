@@ -72,16 +72,26 @@ class MyWindow(Gtk.ApplicationWindow):
             self.set_default_size(1800,600)
 
         mpltnx=Gtk4MpltNx(graph,pos_available,write_weights,route,title)
+        is_hybrid=len(history)>2
+        if is_hybrid:
+            hybrid_hist=sorted(history[2:],key=lambda x: x[0][-1])[0][0]
+            print(history)
         mplthist_abs=Gtk4Mplt()
-        mplthist_abs.ax.plot(history[1],label='average')
-        mplthist_abs.ax.plot(history[0],label='best')
+        mplthist_abs.ax.plot(history[1],label='average'+(' (second algorithm)' if is_hybrid else ''))
+        mplthist_abs.ax.plot(history[0],label='best'+(' (second algorithm)' if is_hybrid else ''))
+        if(is_hybrid):
+            mplthist_abs.ax.plot(hybrid_hist,label='best (first algorithm)')
         mplthist_abs.ax.legend()
         mplthist_abs.ax.set_title('Distance per iteration')
         mplthist_d=Gtk4Mplt()
         best_d=[i-j for i,j in zip(history[0][:-1],history[0][1:])]
         avg_d=[i-j for i,j in zip(history[1][:-1],history[1][1:])]
-        mplthist_d.ax.plot(avg_d,label='average')
-        mplthist_d.ax.plot(best_d,label='best')
+        if is_hybrid:
+            hybrid_hist_d=[i-j for i,j in zip(hybrid_hist[:-1],hybrid_hist[1:])]
+        mplthist_d.ax.plot(avg_d,label='average'+(' (second algorithm)' if is_hybrid else ''))
+        mplthist_d.ax.plot(best_d,label='best'+(' (second algorithm)' if is_hybrid else ''))
+        if(is_hybrid):
+            mplthist_d.ax.plot(hybrid_hist_d,label='best (first algorithm)')
         mplthist_d.ax.legend()
         mplthist_d.ax.set_title('Distance decrease per iteration')
         info_label_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL)

@@ -47,7 +47,7 @@ class HybridGAACO:
         if self.concurrency:
             # self.aco.update_callback=self.update_callback
             with concurrent.futures.ProcessPoolExecutor() as ex:
-                BESTaco=list(e[0] for e in ex.map(ACO(self.aco.cities,self.aco.n_ants,self.aco.alpha,self.aco.beta,self.aco.evaporation,None,True).construct_solution,[aco_iterations]*cycles))
+                BESTaco=list(ex.map(ACO(self.aco.cities,self.aco.n_ants,self.aco.alpha,self.aco.beta,self.aco.evaporation,None,True).construct_solution,[aco_iterations]*cycles))
         else:
             for ic in range(cycles):
                 print(f"Cycle {ic+1}/{cycles}")
